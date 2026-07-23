@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Songs</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .player {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    width: 100%;
+    max-width: 420px;
+    color: white;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .now-playing {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #ffd369;
+    min-height: 24px;
+  }
+  audio {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  ul#playlist {
+    list-style: none;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+  ul#playlist li {
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  ul#playlist li:hover {
+    background: rgba(255,255,255,0.18);
+  }
+  ul#playlist li.active {
+    background: #ffd369;
+    color: #1f1c2c;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<div class="player">
+  <h1>🎵 My Songs</h1>
+  <div class="now-playing" id="nowPlaying">Select a song</div>
+  <audio id="audio" controls></audio>
+  <ul id="playlist"></ul>
+</div>
+
+<script>
+  // ---------------------------------------------------
+  // FUTURE LA PUDHU SONG ADD PANNANUM NA:
+  // Idhe list la innoru line add pannunga, example:
+  // { title: "Song Name", src: "songs/mysong2.mp3" }
+  // mp3 file ah "songs" folder la podunga (GitHub repo la)
+  // ---------------------------------------------------
+  const songs = [
+    { title: "Song 1", src: "songs/song1.mp3" },
+    // { title: "Song 2", src: "songs/song2.mp3" },
+    // { title: "Song 3", src: "songs/song3.mp3" },
+  ];
+
+  const audio = document.getElementById('audio');
+  const nowPlaying = document.getElementById('nowPlaying');
+  const playlistEl = document.getElementById('playlist');
+
+  function loadSong(index) {
+    const song = songs[index];
+    audio.src = song.src;
+    nowPlaying.textContent = "Now Playing: " + song.title;
+    audio.play();
+
+    document.querySelectorAll('#playlist li').forEach((li, i) => {
+      li.classList.toggle('active', i === index);
+    });
+  }
+
+  songs.forEach((song, index) => {
+    const li = document.createElement('li');
+    li.textContent = song.title;
+    li.addEventListener('click', () => loadSong(index));
+    playlistEl.appendChild(li);
+  });
+
+  audio.addEventListener('ended', () => {
+    const currentIndex = songs.findIndex(s => s.src === audio.src.split('/').slice(-2).join('/'));
+    const nextIndex = (currentIndex + 1) % songs.length;
+    loadSong(nextIndex);
+  });
+
+  if (songs.length > 0) {
+    nowPlaying.textContent = "Ready: " + songs[0].title;
+  }
+</script>
+
+</body>
+</html>
